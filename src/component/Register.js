@@ -25,7 +25,7 @@ const validationSchema = yup.object({
 });
 
 const Register = () => {
-  const Auth = useSelector((state) => state.Auth);
+  const {Auth , AuthError} = useSelector((state) => state.Auth);
   const dispatch = useDispatch();
   const loc = useLocation();
   const search = loc.search.slice(1);
@@ -47,10 +47,9 @@ const Register = () => {
           "TOKEN",
           JSON.stringify(res.headers["x-auth-token"])
         );
+        search ? navigate(`/${search}`) : navigate("/");
       })
-      .catch((err) => console.log(err));
-
-    search ? navigate(`/${search}`) : navigate("/");
+      .catch((err) => dispatch({type : "errordis" , payload : err.response.data}));
   };
 
   const formik = useFormik({
@@ -167,6 +166,7 @@ const Register = () => {
       >
         Register
       </button>
+      <p>{AuthError}</p>
     </form>
   );
 };

@@ -6,7 +6,8 @@ import axios from "axios";
 const Homepage = () => {
   // const { Posts } = useSelector((state) => state.Post);
   const [Posts, setPosts] = useState([]);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const [error , setError] = useState(null)
 
   useEffect(() => {
     dispatch({
@@ -19,7 +20,7 @@ const Homepage = () => {
       .then((res) => {
         setPosts(res.data);
       })
-      .catch((err) => console.log(err.code));
+      .catch((err) => setError(err.response.data));
   }, []);
 
   return (
@@ -34,7 +35,7 @@ const Homepage = () => {
           );
         })
       ) : (
-        <p>loading ...</p>
+        error ? <p>{error}</p> : <p>loading ...</p>
       )}
     </section>
   );

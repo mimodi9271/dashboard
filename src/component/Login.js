@@ -17,7 +17,11 @@ const validationSchema = Yup.object({
 });
 
 const Login = () => {
-  const { Auth } = useSelector((state) => state.Auth);
+  const { Auth , AuthError } = useSelector((state) => state.Auth);
+  // const { AuthError } = useSelector((state) => state.Auth);
+  // const result = useSelector((state) => state.Auth);
+  // console.log(result)
+
   const dispatch = useDispatch();
   const loc = useLocation();
   const search = loc.search.slice(1);
@@ -35,10 +39,14 @@ const Login = () => {
           "TOKEN",
           res.headers["x-auth-token"]
         );
+        search ? navigate(`/${search}`) : navigate("/");
       })
-      .catch((err) => console.log(err));
-
-    search ? navigate(`/${search}`) : navigate("/");
+      // .catch((err) => dispatch({type : "autherror" , payload : err.response.data}));
+      .catch(err => {
+        // console.log(AuthError)
+        dispatch({type : "errordis" , payload : err.response.data});
+        // console.log(AuthError)
+      })
   };
 
   useEffect(() => {
@@ -103,6 +111,7 @@ const Login = () => {
         if not Register:
         <Link to={{ pathname: "/reg", search: search }}> Signup</Link>
       </span>
+      <p>{AuthError}</p>
     </form>
   );
 };

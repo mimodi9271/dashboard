@@ -19,20 +19,27 @@ const validationSchema = yup.object({
   description: yup.string().required("Desc is neccesery"),
 });
 
-const AddPost = ({ setIsshow , token }) => {
+const AddPost = ({ setIsshow, token }) => {
+  const { PostError } = useSelector((state) => state.Post);
   const dispatch = useDispatch();
   // const imageFormats = ["image/png", "image/svg", "image/jpeg"];
   // const {Auth} = useSelector(state => state.Auth)
 
   const onSubmit = (values) => {
     axios
-      .post("http://localhost:5000/api/posts", values , {headers : {
-        "x-auth-token" : token 
-      }})
-      .then((res) => console.log("ok baby"))
-      .catch((err) => console.log(err));
-    setIsshow(true);
+      .post("http://localhost:5000/api/posts", values, {
+        headers: {
+          "x-auth-token": token,
+        },
+      })
+      .then((res) => {
+        dispatch({ type: "Addpost", payload: res.data });
+        setIsshow(true);
+      })
+      .catch((err) => dispatch({ type: "errpostdis", payload: err.response.data }));
   };
+
+  // dispatch({type : "errpostdis" , payload : err.response.data})
 
   const formik = useFormik({
     initialValues: initalValues,
@@ -113,6 +120,7 @@ const AddPost = ({ setIsshow , token }) => {
         >
           Add post
         </button>
+        <p>{PostError}</p>
       </form>
     </div>
   );
